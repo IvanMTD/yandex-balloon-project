@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <script src="https://api-maps.yandex.ru/2.1/?apikey=7c13cf7d-c937-4ca6-8021-145ac16bdcae&lang=ru_RU" type="text/javascript"></script>
+    </head>
+    <body>
+        <div id="map" style="width: 1280px; height: 720px"></div>
+        <script th:inline="javascript">
+            let schools = [[${schools}]];
+            ymaps.ready(init)
+            function init() {
+
+                var map = new ymaps.Map('map', {
+                    center: [55.76, 80.64], // lat, long
+                    zoom: 3,
+                    controls: ['zoomControl', 'fullscreenControl']
+                });
+
+                // Objects collection
+                let features = [];
+                for(let i=0; i<schools.length; i++){
+                    features[i] = {
+                        type: "Feature",
+                        id: i,
+                        geometry: {
+                            type: "Point",
+                            coordinates: [schools[i].s, schools[i].d]
+                        },
+                        properties: {
+                            balloonContent: schools[i].name
+                        }
+                    }
+                }
+
+                let collection = {
+                    type: "FeatureCollection",
+                    features: features
+                };
+                console.log(collection);
+
+                // Object Manager
+                objectManager = new ymaps.ObjectManager({ clusterize: true });
+                objectManager.add(collection);
+
+                map.geoObjects.add(objectManager);
+
+            }
+        </script>
+    </body>
+</html>
